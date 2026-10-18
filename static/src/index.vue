@@ -165,7 +165,7 @@ export default{
     </Transition>
    
     <div style="font-weight: 300; top:20%;" class="center" v-if="powerby">
-      GITHUB:<a href="https://github.com/iiop123/workers-image-hosting">Workers-ImageHosting</a>
+      维护:<a href="https://space.bilibili.com/3706964416661960">花林妖精</a>
     </div>
 <Waterfall :list="file_info" id="images" :breakpoints="breakpoints">
   <template #item="{ item, url, index }">
