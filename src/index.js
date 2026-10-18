@@ -4,10 +4,6 @@ import {
     normalizePathnameMiddleware
   } from '@cfworker/web';
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
-const pass='123'//默认登录密码
-/*
-默认密码都是123
-*/
 
   const router = new Router();
   async function randomString(len) { //随机链接生成
@@ -98,16 +94,29 @@ router.post(
     res.body=body
   })  
 
-  //简易登陆验证
-  router.get('/query',async ({req,res})=>{
-    const paramas=req.url.searchParams
-    if (paramas.get('pass')==pass) {
-      const key=await LINK.list()
-    res.body=key
+  //简易登陆验证（密码从 Cloudflare 环境变量/Secret 的 PASSWORD 读取）
+  router.get('/query', async ({ req, res }) => {
+    const params = req.url.searchParams;
+    const inputPass = params.get('pass');
+
+    // 你这份代码用的是 service-worker 语法，KV 和环境变量都挂在全局。
+    // 用 typeof 防止没设置 PASSWORD 时直接报 ReferenceError。
+    const correctPass = typeof PASSWORD !== 'undefined' ? PASSWORD : undefined;
+
+    // 没配置 PASSWORD 时直接拒绝，防止 undefined 绕过
+    if (!correctPass) {
+      res.status = 500;
+      res.body = { info: '服务器未配置 PASSWORD 环境变量' };
+      return;
     }
-    else{
-      res.status=400
-      res.body={info:'密码错误'}
+
+    // 必须严格等于，避免 null == undefined 放行
+    if (inputPass === correctPass) {
+      const key = await LINK.list();
+      res.body = key;
+    } else {
+      res.status = 400;
+      res.body = { info: '密码错误' };
     }
   })
   
