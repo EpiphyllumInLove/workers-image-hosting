@@ -4,7 +4,7 @@ import {
     normalizePathnameMiddleware
   } from '@cfworker/web';
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
-const pass='123'//默认登录密码
+const pass='Yukiru^142857'//默认登录密码
 /*
 默认密码都是123
 */
